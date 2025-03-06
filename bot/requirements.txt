@@ -1,0 +1,10 @@
+# Telegram Bot
+python-telegram-bot>=13.7
+
+# PDF Processing
+PyPDF2==3.0.1
+PyMuPDF==1.23.7
+
+# AI Components
+langchain==0.1.4
+groq==0.4.0
