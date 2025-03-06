@@ -128,3 +128,13 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Storage directories
+stored_csvs/
+stored_pdfs/
+logs/

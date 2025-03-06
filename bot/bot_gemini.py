@@ -43,13 +43,14 @@ MAX_QUESTIONS_PER_PAGE = 10
 GEMINI_MODEL = "gemini-2.0-flash"
 PDF_STORAGE_DIR = "stored_pdfs"
 LOG_DIR = "logs"
+CSV_STORAGE_DIR = "stored_csvs"  # Added CSV storage constant
 
 import datetime
 import pathlib
 
 def setup_dirs():
     """Create necessary directories if they don't exist"""
-    for directory in [PDF_STORAGE_DIR, LOG_DIR]:
+    for directory in [PDF_STORAGE_DIR, LOG_DIR, CSV_STORAGE_DIR]:  # Updated directory list
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
 
 # Create necessary directories before setting up logging
@@ -615,52 +616,30 @@ class TelegramBot:
             # Format and export
             csv_data = self.csv_exporter.format_mcqs_for_csv(mcqs_by_page)
             csv_string = self.csv_exporter.create_csv_string(csv_data)
-            questions_text = self.csv_exporter.format_questions_text(mcqs_by_page)
             
             # Delete temporary file
             if os.path.exists(pdf_path):
                 os.unlink(pdf_path)
             
-            # Send text file with questions first
             original_name = os.path.splitext(document.file_name)[0]
             
-            # Use open() to create temporary files
-            questions_filename = f"{original_name}_questions.txt"
-            temp_text_path = os.path.join(tempfile.gettempdir(), questions_filename)
-            with open(temp_text_path, 'w', encoding='utf-8') as f:
-                f.write(questions_text)
-            
-            with open(temp_text_path, 'rb') as f:
-                await context.bot.send_document(
-                    chat_id=update.effective_chat.id,
-                    document=f,
-                    filename=questions_filename,
-                    caption=f"Here's a text file with all {total_questions} questions."
-                )
-            
-            # Clean up temporary file
-            if os.path.exists(temp_text_path):
-                os.unlink(temp_text_path)
-            
-            # Send CSV file
-            csv_filename = f"{original_name}_questions.csv"
-            temp_csv_path = os.path.join(tempfile.gettempdir(), csv_filename)
+            # Store CSV in dedicated directory and send to user
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            csv_filename = f"{timestamp}_{original_name}_questions.csv"
+            csv_filepath = os.path.join(CSV_STORAGE_DIR, csv_filename)
             
             # Write CSV with BOM for Excel compatibility
-            with open(temp_csv_path, 'w', encoding='utf-8-sig') as f:
+            with open(csv_filepath, 'w', encoding='utf-8-sig') as f:
                 f.write(csv_string)
             
-            with open(temp_csv_path, 'rb') as f:
+            # Send CSV file to user
+            with open(csv_filepath, 'rb') as f:
                 await context.bot.send_document(
                     chat_id=update.effective_chat.id,
                     document=f,
                     filename=csv_filename,
                     caption=f"Here's the CSV file with {total_questions} questions in the Udemy quiz format."
                 )
-            
-            # Clean up temporary file
-            if os.path.exists(temp_csv_path):
-                os.unlink(temp_csv_path)
             
             # Send completion message
             await context.bot.delete_message(
