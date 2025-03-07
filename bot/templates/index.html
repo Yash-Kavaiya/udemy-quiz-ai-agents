@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+
+{% block title %} - Convert PDFs to Quiz Questions{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-5">PDF to MCQ Generator</h1>
+    <p class="lead">Upload your PDF and get multiple-choice questions in CSV format</p>
+    <hr class="my-4">
+    <p>Our tool generates well-structured multiple-choice questions from your PDF content, ready to import into learning platforms using the Practice Test Bulk Question Upload format.</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                        <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                    </svg>
+                </div>
+                <h5 class="card-title">AI-Powered</h5>
+                <p class="card-text">Leverages Google's Gemini AI to create high-quality multiple-choice questions from your content.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                        <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"/>
+                    </svg>
+                </div>
+                <h5 class="card-title">CSV Export</h5>
+                <p class="card-text">Generates CSV files compatible with Practice Test Bulk Question Upload format.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707L9.293 0zM9.5 1v2a1 1 0 0 0 1 1h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        <path d="M3 9h10v1H3V9z"/>
+                        <path d="M3 6h10v1H3V6z"/>
+                        <path d="M3 3h4v1H3V3z"/>
+                    </svg>
+                </div>
+                <h5 class="card-title">Detailed Explanations</h5>
+                <p class="card-text">Each question includes explanations for the correct answer to enhance learning.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Upload PDF</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="pdf_file" class="form-label">Select PDF File</label>
+                        <input type="file" class="form-control" id="pdf_file" name="pdf_file" accept=".pdf" required>
+                        <div class="form-text">Maximum file size: 16MB</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="min_questions" class="form-label">Min Questions Per Page</label>
+                            <input type="number" class="form-control" id="min_questions" name="min_questions" 
+                                   min="1" max="10" value="3">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="max_questions" class="form-label">Max Questions Per Page</label>
+                            <input type="number" class="form-control" id="max_questions" name="max_questions" 
+                                   min="1" max="20" value="10">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Generate Questions</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">How It Works</h5>
+            </div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered mb-0">
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">Upload your PDF</div>
+                            Select any PDF document with text content
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">AI processes the content</div>
+                            Our system extracts text and uses Google's Gemini model to generate questions
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">Download your CSV</div>
+                            Get a properly formatted CSV file ready for importing into learning platforms
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

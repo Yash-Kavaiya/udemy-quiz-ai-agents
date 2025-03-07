@@ -7,4 +7,7 @@ PyMuPDF==1.23.7
 
 # AI Components
 langchain==0.1.4
-groq==0.4.0
+python-dotenv
+
+# Google Gemini API
+google-generativeai>=0.3.1
